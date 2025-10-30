@@ -8,7 +8,7 @@ from pathlib import Path
 from sqlalchemy.orm import Session
 from .config import settings
 from .database import engine, Base, get_db
-from .routes import auth, artworks
+from .routes import auth, artworks, interactions
 from .auth import get_current_user_from_cookie
 
 # Create database tables
@@ -40,6 +40,7 @@ templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 # Include routers
 app.include_router(auth.router, tags=["auth"])
 app.include_router(artworks.router, tags=["artworks"])
+app.include_router(interactions.router, tags=["interactions"])
 
 
 @app.get("/", response_class=HTMLResponse)

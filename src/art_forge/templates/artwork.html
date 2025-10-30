@@ -92,7 +92,64 @@
         </button>
         {% endif %}
     </div>
-    
+
+    <!-- Spark Button -->
+    <div class="spark-section">
+        <form method="POST" action="/art/{{ artwork.artist.username }}/{{ artwork.slug }}/spark" style="margin: 0;">
+            <button type="submit" class="spark-button {% if user_has_sparked %}sparked{% endif %}">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="{% if user_has_sparked %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="2">
+                    <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/>
+                </svg>
+                <span>{{ spark_count }} {% if spark_count == 1 %}Spark{% else %}Sparks{% endif %}</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Comments Section -->
+    <div id="comments" class="comments-section">
+        <h2>Comments ({{ comments|length }})</h2>
+
+        {% if artwork.allow_comments %}
+        <div class="comment-form-container">
+            <h3>Leave a Comment</h3>
+            <form method="POST" action="/art/{{ artwork.artist.username }}/{{ artwork.slug }}/comment" class="comment-form">
+                {% if not current_user %}
+                <div class="form-group">
+                    <label for="author_name">Your Name</label>
+                    <input type="text" id="author_name" name="author_name" required maxlength="100" placeholder="Enter your name">
+                </div>
+                {% endif %}
+                <div class="form-group">
+                    <label for="content">Comment</label>
+                    <textarea id="content" name="content" required rows="4" placeholder="Share your thoughts..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Post Comment</button>
+            </form>
+        </div>
+        {% endif %}
+
+        <div class="comments-list">
+            {% if comments %}
+                {% for comment in comments %}
+                <div class="comment">
+                    <div class="comment-header">
+                        <strong>{{ comment.author.username if comment.author else comment.author_name }}</strong>
+                        <span class="comment-date">{{ comment.created_at.strftime('%B %d, %Y at %I:%M %p') if comment.created_at else 'Recently' }}</span>
+                    </div>
+                    <div class="comment-content">{{ comment.content }}</div>
+                    {% if current_user and (current_user.id == comment.author_id or current_user.id == artwork.artist_id) %}
+                    <form method="POST" action="/art/{{ artwork.artist.username }}/{{ artwork.slug }}/comment/{{ comment.id }}/delete" style="margin-top: 0.5rem;" onsubmit="return confirm('Are you sure you want to delete this comment?');">
+                        <button type="submit" class="btn-delete-comment">Delete</button>
+                    </form>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="no-comments">No comments yet. Be the first to share your thoughts!</p>
+            {% endif %}
+        </div>
+    </div>
+
     {% if is_owner %}
     <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(139, 92, 246, 0.1); border-radius: 12px; border-left: 4px solid var(--primary-purple);">
         <p style="color: var(--text-gray); margin-bottom: 1rem;">You are viewing this as the owner.</p>

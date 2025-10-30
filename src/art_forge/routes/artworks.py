@@ -191,8 +191,31 @@ async def view_artwork(username: str, slug: str, request: Request, db: Session =
     if not artwork.is_public and not is_owner:
         raise HTTPException(status_code=403, detail="This artwork is private")
 
-    # Get spark count
+    # Get spark count and check if user has sparked
     spark_count = len(artwork.sparks)
+    user_has_sparked = False
+
+    if current_user:
+        from ..models.spark import Spark
+        user_has_sparked = db.query(Spark).filter(
+            Spark.artwork_id == artwork.id,
+            Spark.user_id == current_user.id
+        ).first() is not None
+    else:
+        # Check by session ID for anonymous users
+        session_id = request.cookies.get("session_id")
+        if session_id:
+            from ..models.spark import Spark
+            user_has_sparked = db.query(Spark).filter(
+                Spark.artwork_id == artwork.id,
+                Spark.session_id == session_id
+            ).first() is not None
+
+    # Get comments
+    from ..models.comment import Comment
+    comments = db.query(Comment).filter(
+        Comment.artwork_id == artwork.id
+    ).order_by(Comment.created_at.desc()).all()
 
     return templates.TemplateResponse(
         "artwork.html",
@@ -203,6 +226,8 @@ async def view_artwork(username: str, slug: str, request: Request, db: Session =
             "artwork": artwork,
             "is_owner": is_owner,
             "spark_count": spark_count,
+            "user_has_sparked": user_has_sparked,
+            "comments": comments,
         }
     )
 
