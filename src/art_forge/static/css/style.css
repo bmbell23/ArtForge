@@ -273,6 +273,27 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Gallery Grid */
+.browse-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem 0;
+}
+
+.browse-header h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    background: var(--gradient-1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-family: 'Playfair Display', serif;
+}
+
+.browse-subtitle {
+    font-size: 1.3rem;
+    color: var(--text-gray);
+}
+
 .gallery-header {
     display: flex;
     justify-content: space-between;
@@ -328,6 +349,22 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--primary-purple);
 }
 
+.artwork-artist {
+    color: var(--text-gray);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.artwork-artist a {
+    color: var(--primary-purple);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.artwork-artist a:hover {
+    text-decoration: underline;
+}
+
 .artwork-description {
     color: var(--text-gray);
     margin-bottom: 1rem;
@@ -336,8 +373,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .artwork-meta {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
     font-size: 0.85rem;
     color: var(--text-gray);
 }
@@ -350,6 +387,14 @@ h1, h2, h3, h4, h5, h6 {
 
 .artwork-header {
     margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+}
+
+.artwork-title-section {
+    flex: 1;
 }
 
 .artwork-header h1 {
@@ -367,6 +412,35 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
     color: var(--text-gray);
     font-size: 1.1rem;
+    flex-wrap: wrap;
+}
+
+.btn-view-gallery {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: white;
+    border: 2px solid var(--primary-purple);
+    border-radius: 8px;
+    color: var(--primary-purple);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.btn-view-gallery:hover {
+    background: var(--primary-purple);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-view-gallery svg {
+    flex-shrink: 0;
 }
 
 /* Gallery Container */
@@ -389,10 +463,11 @@ h1, h2, h3, h4, h5, h6 {
     object-fit: contain;
     border-radius: 12px;
     cursor: pointer;
-    transition: transform 0.2s ease;
+    transition: transform 0.2s ease, opacity 0.15s ease;
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
+    will-change: opacity;
 }
 
 .gallery-main-image:hover {
@@ -536,6 +611,8 @@ h1, h2, h3, h4, h5, h6 {
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
+    transition: opacity 0.15s ease;
+    will-change: opacity;
 }
 
 .lightbox-close {
@@ -1005,6 +1082,21 @@ img {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.25rem;
+    }
+
+    /* Mobile artwork header */
+    .artwork-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+
+    .artwork-header h1 {
+        font-size: 2rem;
+    }
+
+    .artwork-byline {
+        font-size: 0.95rem;
     }
 }
 

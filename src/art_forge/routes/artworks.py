@@ -60,6 +60,27 @@ def save_uploaded_image(file: UploadFile) -> tuple:
     return filename, width, height, file_size
 
 
+@router.get("/art/browse")
+async def browse_artworks(request: Request, db: Session = Depends(get_db)):
+    """Browse all public artworks."""
+    current_user = get_current_user_from_cookie(request, db)
+
+    # Get all public artworks, ordered by most recent
+    artworks = db.query(Artwork).filter(
+        Artwork.is_public == True
+    ).order_by(Artwork.created_at.desc()).all()
+
+    return templates.TemplateResponse(
+        "browse.html",
+        {
+            "request": request,
+            "title": "Browse Art - ArtForge",
+            "current_user": current_user,
+            "artworks": artworks,
+        }
+    )
+
+
 @router.get("/art/{username}")
 async def user_gallery(username: str, request: Request, db: Session = Depends(get_db)):
     """Display user's artwork gallery."""

@@ -7,11 +7,10 @@
         <p class="subtitle">Your creative space to showcase, share, and celebrate art</p>
 
         <div class="hero-buttons">
+            <a href="/art/browse" class="btn btn-primary">Browse Art</a>
             {% if current_user %}
-            <a href="/art/{{ current_user.username }}" class="btn btn-primary">My Gallery</a>
             <a href="/art/{{ current_user.username }}/upload" class="btn btn-secondary">Upload Artwork</a>
             {% else %}
-            <a href="/art/register" class="btn btn-primary">Get Started</a>
             <a href="/art/login" class="btn btn-secondary">Sign In</a>
             {% endif %}
         </div>

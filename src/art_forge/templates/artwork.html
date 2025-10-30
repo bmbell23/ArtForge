@@ -3,14 +3,25 @@
 {% block content %}
 <div class="container artwork-detail">
     <div class="artwork-header">
-        <h1>{{ artwork.title }}</h1>
-        <div class="artwork-byline">
-            <span>By <strong>{{ artwork.artist.username }}</strong></span>
-            <span>•</span>
-            <span>{{ artwork.created_at.strftime('%B %d, %Y') if artwork.created_at else 'Recently' }}</span>
-            <span>•</span>
-            <span>✨ {{ spark_count }} sparks</span>
+        <div class="artwork-title-section">
+            <h1>{{ artwork.title }}</h1>
+            <div class="artwork-byline">
+                <span>By <strong>{{ artwork.artist.username }}</strong></span>
+                <span>•</span>
+                <span>{{ artwork.created_at.strftime('%B %d, %Y') if artwork.created_at else 'Recently' }}</span>
+                <span>•</span>
+                <span>✨ {{ spark_count }} sparks</span>
+            </div>
         </div>
+        <a href="/art/{{ artwork.artist.username }}" class="btn-view-gallery">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <span>View Gallery</span>
+        </a>
     </div>
     
     {% if artwork.description %}
@@ -27,6 +38,7 @@
                  src="/art/uploads/{{ artwork.images[0].filename }}"
                  alt="{{ artwork.title }}"
                  class="gallery-main-image"
+                 loading="eager"
                  onclick="openLightbox(0)"
                  oncontextmenu="return false;">
 
@@ -55,6 +67,7 @@
                 <img src="/art/uploads/{{ image.filename }}"
                      alt="{{ artwork.title }}"
                      class="gallery-thumbnail {% if loop.index0 == 0 %}active{% endif %}"
+                     loading="{% if loop.index0 < 3 %}eager{% else %}lazy{% endif %}"
                      onclick="setImage({{ loop.index0 }})"
                      oncontextmenu="return false;">
                 {% if is_owner and artwork.images|length > 1 %}
@@ -172,6 +185,39 @@ const images = [
 ];
 let currentImageIndex = 0;
 
+// Preload images for smoother transitions
+const imageCache = {};
+function preloadImage(src) {
+    if (!imageCache[src]) {
+        const img = new Image();
+        img.src = src;
+        imageCache[src] = img;
+    }
+}
+
+// Preload adjacent images
+function preloadAdjacentImages(index) {
+    // Preload next image
+    const nextIndex = (index + 1) % images.length;
+    if (images[nextIndex]) {
+        preloadImage(images[nextIndex]);
+    }
+
+    // Preload previous image
+    const prevIndex = (index - 1 + images.length) % images.length;
+    if (images[prevIndex]) {
+        preloadImage(images[prevIndex]);
+    }
+}
+
+// Preload all images on page load (in background)
+window.addEventListener('load', function() {
+    // Preload all images with slight delay to not block initial page load
+    setTimeout(() => {
+        images.forEach(src => preloadImage(src));
+    }, 500);
+});
+
 // Delete individual image
 function deleteImage(imageId, filename) {
     if (!confirm('Are you sure you want to delete this image? This cannot be undone.')) {
@@ -189,13 +235,24 @@ function deleteImage(imageId, filename) {
 // Change main image
 function setImage(index) {
     currentImageIndex = index;
-    document.getElementById('mainImage').src = images[index];
-    document.getElementById('currentImageNum').textContent = index + 1;
+    const mainImg = document.getElementById('mainImage');
 
-    // Update thumbnail active state
-    document.querySelectorAll('.gallery-thumbnail').forEach((thumb, i) => {
-        thumb.classList.toggle('active', i === index);
-    });
+    // Add fade effect
+    mainImg.style.opacity = '0.5';
+
+    setTimeout(() => {
+        mainImg.src = images[index];
+        mainImg.style.opacity = '1';
+        document.getElementById('currentImageNum').textContent = index + 1;
+
+        // Update thumbnail active state
+        document.querySelectorAll('.gallery-thumbnail').forEach((thumb, i) => {
+            thumb.classList.toggle('active', i === index);
+        });
+
+        // Preload adjacent images
+        preloadAdjacentImages(index);
+    }, 100);
 }
 
 function changeImage(direction) {
@@ -209,6 +266,9 @@ function openLightbox(index) {
     document.getElementById('lightboxImage').src = images[index];
     document.getElementById('lightbox').classList.add('active');
     document.body.style.overflow = 'hidden';
+
+    // Preload adjacent images when opening lightbox
+    preloadAdjacentImages(index);
 }
 
 function closeLightbox() {
@@ -218,8 +278,19 @@ function closeLightbox() {
 
 function changeLightboxImage(direction) {
     currentImageIndex = (currentImageIndex + direction + images.length) % images.length;
-    document.getElementById('lightboxImage').src = images[currentImageIndex];
-    setImage(currentImageIndex); // Also update main gallery
+    const lightboxImg = document.getElementById('lightboxImage');
+
+    // Add fade effect for smoother transition
+    lightboxImg.style.opacity = '0.5';
+
+    setTimeout(() => {
+        lightboxImg.src = images[currentImageIndex];
+        lightboxImg.style.opacity = '1';
+        setImage(currentImageIndex); // Also update main gallery
+
+        // Preload adjacent images
+        preloadAdjacentImages(currentImageIndex);
+    }, 100);
 }
 
 // Keyboard navigation
