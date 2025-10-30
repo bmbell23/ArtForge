@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container upload-container">
+    <div class="upload-card">
+        <h1 style="margin-bottom: 2rem; text-align: center; background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Upload Artwork</h1>
+        
+        <form method="POST" action="/art/{{ current_user.username }}/upload" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="title">Artwork Title</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Description (optional)</label>
+                <textarea id="description" name="description" rows="4"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Images</label>
+                <div class="file-upload-area">
+                    <label for="images" class="upload-label">
+                        📁 Click to select images<br>
+                        <small style="color: var(--text-gray); font-weight: normal;">You can select multiple images</small>
+                    </label>
+                    <input type="file" id="images" name="images" accept="image/*" multiple required>
+                </div>
+                <div id="file-list" style="margin-top: 1rem; color: var(--text-gray);"></div>
+            </div>
+            
+            <div class="form-group">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" name="is_public" checked style="margin-right: 0.5rem; width: auto;">
+                    Make this artwork public
+                </label>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Upload Artwork</button>
+        </form>
+    </div>
+</div>
+
+<script>
+document.getElementById('images').addEventListener('change', function(e) {
+    const fileList = document.getElementById('file-list');
+    const files = e.target.files;
+    
+    if (files.length > 0) {
+        let html = '<strong>Selected files:</strong><ul style="margin-top: 0.5rem;">';
+        for (let i = 0; i < files.length; i++) {
+            html += `<li>${files[i].name}</li>`;
+        }
+        html += '</ul>';
+        fileList.innerHTML = html;
+    } else {
+        fileList.innerHTML = '';
+    }
+});
+</script>
+{% endblock %}
+

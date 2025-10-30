@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="gallery-header">
+        <div>
+            <h1>{{ gallery_user.username }}'s Gallery</h1>
+            {% if gallery_user.bio %}
+            <p style="color: var(--text-gray); margin-top: 0.5rem;">{{ gallery_user.bio }}</p>
+            {% endif %}
+        </div>
+        {% if is_owner %}
+        <a href="/art/{{ gallery_user.username }}/upload" class="btn btn-primary">Upload Artwork</a>
+        {% endif %}
+    </div>
+    
+    {% if artworks %}
+    <div class="gallery-grid">
+        {% for artwork in artworks %}
+        <div class="artwork-card">
+            {% if artwork.images %}
+            <a href="/art/{{ gallery_user.username }}/{{ artwork.slug }}">
+                <img src="/art/uploads/{{ artwork.images[0].filename }}" alt="{{ artwork.title }}" class="artwork-image">
+            </a>
+            {% else %}
+            <div class="artwork-image" style="display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
+                🎨
+            </div>
+            {% endif %}
+            
+            <div class="artwork-info">
+                <h3><a href="/art/{{ gallery_user.username }}/{{ artwork.slug }}">{{ artwork.title }}</a></h3>
+                {% if artwork.description %}
+                <p class="artwork-description">{{ artwork.description[:100] }}{% if artwork.description|length > 100 %}...{% endif %}</p>
+                {% endif %}
+                <div class="artwork-meta">
+                    <span>{{ artwork.created_at.strftime('%b %d, %Y') if artwork.created_at else 'Recently' }}</span>
+                    <span>✨ {{ artwork.sparks|length }} sparks</span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 4rem 2rem;">
+        <h2 style="color: var(--text-gray); margin-bottom: 1rem;">No artworks yet</h2>
+        {% if is_owner %}
+        <p style="color: var(--text-gray); margin-bottom: 2rem;">Start building your gallery by uploading your first piece!</p>
+        <a href="/art/{{ gallery_user.username }}/upload" class="btn btn-primary">Upload Your First Artwork</a>
+        {% else %}
+        <p style="color: var(--text-gray);">This artist hasn't shared any work yet.</p>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+

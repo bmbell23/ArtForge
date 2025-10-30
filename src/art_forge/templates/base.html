@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ title }}{% endblock %}</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/art/static/css/style.css">
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/art/" class="logo">🎨 ArtForge</a>
+            <div class="nav-links">
+                <a href="/art/">Home</a>
+                {% if current_user %}
+                <a href="/art/{{ current_user.username }}">Gallery</a>
+                <a href="/art/logout">Logout</a>
+                {% else %}
+                <a href="/art/login">Login</a>
+                <a href="/art/register">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 ArtForge. Part of <a href="https://forge-freedom.com">Forge Freedom</a>.</p>
+        </div>
+    </footer>
+
+    <!-- Custom JavaScript -->
+    <script src="/art/static/js/main.js"></script>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
+

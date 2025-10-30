@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "art_forge"
+version = "0.1.0"
+description = "ArtForge - A platform for artists to showcase and share their artwork"
+authors = [
+    {name = "Brandon Bell", email = "brandon@forge-freedom.com"},
+]
+requires-python = ">=3.8"
+dependencies = [
+    "fastapi>=0.104.0",
+    "uvicorn[standard]>=0.24.0",
+    "sqlalchemy>=2.0.0",
+    "alembic>=1.12.0",
+    "python-dotenv>=1.0.0",
+    "jinja2>=3.1.0",
+    "python-multipart>=0.0.6",
+    "passlib[bcrypt]>=1.7.4",
+    "python-jose[cryptography]>=3.3.0",
+    "aiofiles>=23.0.0",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "pillow>=10.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=22.0.0",
+    "isort>=5.0.0",
+    "mypy>=0.900",
+]
+
+[project.scripts]
+artforge-server = "art_forge.server:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["art_forge"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+

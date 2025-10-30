@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero">
+    <div class="container">
+        <h1>Welcome to ArtForge</h1>
+        <p class="subtitle">Your creative space to showcase, share, and celebrate art</p>
+
+        <div class="hero-buttons">
+            {% if current_user %}
+            <a href="/art/{{ current_user.username }}" class="btn btn-primary">My Gallery</a>
+            <a href="/art/{{ current_user.username }}/upload" class="btn btn-secondary">Upload Artwork</a>
+            {% else %}
+            <a href="/art/register" class="btn btn-primary">Get Started</a>
+            <a href="/art/login" class="btn btn-secondary">Sign In</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<section class="features">
+    <div class="container">
+        <h2>Features</h2>
+        
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3>🎨 Showcase Your Art</h3>
+                <p>Upload and display your artwork in a beautiful, modern gallery designed to make your creations shine.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🖼️ Multiple Images</h3>
+                <p>Share different versions, angles, or related pieces together in a single artwork project.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>✨ Get Sparks</h3>
+                <p>Receive appreciation from viewers with our unique "spark" system - like kudos for your creativity.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>💬 Engage with Comments</h3>
+                <p>Connect with your audience through comments and feedback on your artwork.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🔗 Share Easily</h3>
+                <p>Every artwork gets its own unique link, making it easy to share your creations with the world.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🏷️ Organize with Tags & Series</h3>
+                <p>Categorize your work with tags and group related pieces into series for better organization.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta">
+    <div class="container">
+        <h2>Ready to Share Your Art?</h2>
+        <p>Join ArtForge today and start building your creative portfolio.</p>
+        {% if current_user %}
+        <a href="/art/{{ current_user.username }}/upload" class="btn btn-primary btn-large">Upload Your First Piece</a>
+        {% else %}
+        <a href="/art/register" class="btn btn-primary btn-large">Create Your Gallery</a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+

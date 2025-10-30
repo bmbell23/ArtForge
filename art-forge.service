@@ -1,0 +1,19 @@
+[Unit]
+Description=ArtForge FastAPI Application
+After=network.target
+
+[Service]
+User=brandon
+WorkingDirectory=/home/brandon/projects/art_gallery
+Environment="PATH=/home/brandon/projects/art_gallery/venv/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="PYTHONPATH=/home/brandon/projects/art_gallery"
+ExecStart=/home/brandon/projects/art_gallery/venv/bin/python3 scripts/server/run_server.py
+ExecStop=/bin/kill -TERM $MAINPID
+Restart=on-failure
+RestartSec=5
+KillMode=mixed
+TimeoutStopSec=5
+
+[Install]
+WantedBy=multi-user.target
+
