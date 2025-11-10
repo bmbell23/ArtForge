@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "art_forge"
-version = "0.1.4"
+version = "0.1.5"
 description = "ArtForge - A platform for artists to showcase and share their artwork"
 authors = [
     {name = "Brandon Bell", email = "brandon@forge-freedom.com"},
