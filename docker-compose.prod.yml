@@ -1,0 +1,46 @@
+services:
+  artforge:
+    build:
+      context: .
+      target: production
+    container_name: artforge-prod
+    volumes:
+      - ./data:/app/data
+      - artforge-uploads:/app/data/uploads
+    environment:
+      - PYTHONPATH=/app/src
+      - DATABASE_URL=sqlite:///./data/art_forge.db
+      - UPLOAD_DIR=/app/data/uploads
+      - SECRET_KEY=${SECRET_KEY:-your-secret-key-here-change-in-production}
+    restart: unless-stopped
+    networks:
+      - artforge-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  nginx:
+    image: nginx:alpine
+    container_name: artforge-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - artforge-uploads:/var/www/uploads:ro
+    depends_on:
+      - artforge
+    restart: unless-stopped
+    networks:
+      - artforge-network
+
+volumes:
+  artforge-uploads:
+
+networks:
+  artforge-network:
+    driver: bridge

@@ -1,0 +1,29 @@
+services:
+  artforge:
+    build:
+      context: .
+      target: development
+    container_name: artforge
+    ports:
+      - "8003:8003"
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+      - ./static:/app/static
+    environment:
+      - PYTHONPATH=/app/src
+      - DATABASE_URL=sqlite:///./data/art_forge.db
+      - UPLOAD_DIR=/app/data/uploads
+    restart: unless-stopped
+    networks:
+      - artforge-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  artforge-network:
+    driver: bridge
