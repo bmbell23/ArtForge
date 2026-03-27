@@ -116,10 +116,11 @@ async def user_gallery(username: str, request: Request, db: Session = Depends(ge
 async def upload_artwork_page(username: str, request: Request, db: Session = Depends(get_db)):
     """Display artwork upload page."""
     current_user = get_current_user_from_cookie(request, db)
-    
-    if not current_user or current_user.username != username:
-        return RedirectResponse(url="/login", status_code=302)
-    
+
+    # Auto-login ensures current_user is always set, so just verify username match
+    if current_user.username != username:
+        raise HTTPException(status_code=403, detail="Not authorized")
+
     return templates.TemplateResponse(
         "upload.html",
         {

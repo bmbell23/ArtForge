@@ -50,20 +50,49 @@ def decode_access_token(token: str) -> Optional[dict]:
 
 
 def get_current_user_from_cookie(request: Request, db: Session) -> Optional[User]:
-    """Get the current user from the session cookie."""
+    """Get the current user from the session cookie.
+
+    If no cookie is present, automatically returns the 'brandon' user
+    for simplified access on private servers.
+    """
     token = request.cookies.get("access_token")
+
     if not token:
-        return None
-    
+        # Auto-login as brandon user when no authentication cookie is present
+        user = db.query(User).filter(User.username == "brandon").first()
+        return user
+
     payload = decode_access_token(token)
     if not payload:
-        return None
-    
+        # If token is invalid, fall back to brandon user
+        user = db.query(User).filter(User.username == "brandon").first()
+        return user
+
     username = payload.get("sub")
     if not username:
-        return None
-    
+        # If no username in token, fall back to brandon user
+        user = db.query(User).filter(User.username == "brandon").first()
+        return user
+
     user = db.query(User).filter(User.username == username).first()
+    return user
+
+
+def require_current_user(request: Request, db: Session = Depends(get_db)) -> User:
+    """Require authentication (always returns brandon user if not authenticated)."""
+    user = get_current_user_from_cookie(request, db)
+
+    if user is None:
+        # This should never happen since get_current_user_from_cookie
+        # now auto-returns brandon, but just in case:
+        user = db.query(User).filter(User.username == "brandon").first()
+        if not user:
+            from fastapi import HTTPException, status
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Default user 'brandon' not found in database"
+            )
+
     return user
 
 

@@ -13,3 +13,8 @@ build/
 *.sqlite
 *.sqlite3
 .git/
+data/
+logs/
+.env
+.env.*
+*.log
