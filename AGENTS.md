@@ -29,26 +29,15 @@ These operations have caused catastrophic data loss in the past. **NEVER** perfo
 
 #### Restarting Services
 
-**NOTE: This server has Docker permission issues. `docker restart` and `docker-compose restart` WILL FAIL with "permission denied".**
-
-**WORKING METHOD:**
+**Use standard Docker Compose commands:**
 ```bash
-# Step 1: Find the container PID
-PID=$(docker inspect <container_name> --format '{{.State.Pid}}')
-
-# Step 2: Kill the process
-kill $PID
-
-# Step 3: Bring it back up
 cd /path/to/project
-docker-compose up -d
+docker compose restart <service>
 
-# Example for ArtForge:
-PID=$(docker inspect da7d9e211ea5_artforge_app --format '{{.State.Pid}}')
-kill $PID
-cd /home/brandon/projects/ArtForge
-docker-compose up -d
+# Or to rebuild and redeploy:
+docker compose up -d --build
 ```
+
 
 **METHODS THAT DON'T WORK ON THIS SERVER:**
 ```bash

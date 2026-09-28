@@ -23,8 +23,6 @@
 
 ### ALWAYS DO THIS INSTEAD
 
-**NOTE: This server has Docker permission issues. `docker restart` and `docker-compose restart` WILL FAIL with "permission denied".**
-
 **For Service Issues:**
 ```bash
 # 1. Diagnose first
@@ -32,11 +30,9 @@ docker logs <container>
 df -h
 free -h
 
-# 2. Restart individual service (WORKING METHOD)
-PID=$(docker inspect <container> --format '{{.State.Pid}}')
-kill $PID
+# 2. Restart individual service
 cd /path/to/project
-docker-compose up -d
+docker compose up -d
 ```
 
 **For Database Issues:**
