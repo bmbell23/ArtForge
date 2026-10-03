@@ -55,6 +55,7 @@ async def home(request: Request, db: Session = Depends(get_db)):
     """Home page - landing page for ArtForge."""
     current_user = get_current_user_from_cookie(request, db)
     return templates.TemplateResponse(
+        request,
         "index.html",
         {
             "request": request,

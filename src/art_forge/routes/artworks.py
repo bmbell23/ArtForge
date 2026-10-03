@@ -71,6 +71,7 @@ async def browse_artworks(request: Request, db: Session = Depends(get_db)):
     ).order_by(Artwork.created_at.desc()).all()
 
     return templates.TemplateResponse(
+        request,
         "browse.html",
         {
             "request": request,
@@ -100,6 +101,7 @@ async def user_gallery(username: str, request: Request, db: Session = Depends(ge
     is_owner = current_user and current_user.id == user.id
     
     return templates.TemplateResponse(
+        request,
         "gallery.html",
         {
             "request": request,
@@ -122,6 +124,7 @@ async def upload_artwork_page(username: str, request: Request, db: Session = Dep
         raise HTTPException(status_code=403, detail="Not authorized")
 
     return templates.TemplateResponse(
+        request,
         "upload.html",
         {
             "request": request,
@@ -240,6 +243,7 @@ async def view_artwork(username: str, slug: str, request: Request, db: Session =
     ).order_by(Comment.created_at.desc()).all()
 
     return templates.TemplateResponse(
+        request,
         "artwork.html",
         {
             "request": request,
