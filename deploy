@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Rebuild and restart ArtForge from this checkout, then wait until it answers.
+# Migrations: new tables are created at startup by the app (Base.metadata.create_all in
+# src/art_forge/main.py). Alembic upgrades are manual:
+#   docker compose exec -T artforge alembic upgrade head
+set -euo pipefail
+cd "$(dirname "$0")"
+
+docker compose up -d --build artforge
+
+for _ in $(seq 1 45); do
+    if [ "$(curl -s -o /dev/null -w '%{http_code}' --max-time 2 localhost:8003/health)" = 200 ]; then
+        echo "deploy: artforge up on :8003 ($(cat version.txt 2>/dev/null || echo 'no version'))"
+        exit 0
+    fi
+    sleep 2
+done
+echo "deploy: artforge did not answer 200 on :8003/health within 90 s" >&2
+docker logs --tail 20 artforge >&2 || true
+exit 1
