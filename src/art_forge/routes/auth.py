@@ -30,6 +30,7 @@ async def login_page(request: Request, db: Session = Depends(get_db)):
         return RedirectResponse(url=f"/art/{current_user.username}", status_code=302)
 
     return templates.TemplateResponse(
+        request,
         "login.html",
         {"request": request, "title": "Login - ArtForge"}
     )
@@ -66,6 +67,7 @@ async def register_page(request: Request, db: Session = Depends(get_db)):
         return RedirectResponse(url=f"/art/{current_user.username}", status_code=302)
 
     return templates.TemplateResponse(
+        request,
         "register.html",
         {"request": request, "title": "Register - ArtForge"}
     )
